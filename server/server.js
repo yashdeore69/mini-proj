@@ -1,11 +1,18 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cookieParser = require('cookie-parser');
-const cors = require('cors');
+import express from 'express';
+import mongoose from 'mongoose';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import authRouter from './routes/auth/auth-routes.js';
 
-mongoose.connect('mongodb+srv://deoreyash69:deoreyash69@cluster0.yctvb8a.mongodb.net/mydatabase?retryWrites=true&w=majority&ssl=true')
-.then(() => console.log('MongoDB connected successfully'))
-.catch(err => console.log('MongoDB connection error', err));
+dotenv.config();
+
+const uri = 'mongodb+srv://deoreyash69:deoreyash69@cluster0.yctvb8a.mongodb.net/mydatabase?retryWrites=true&w=majority&tls=true';
+
+mongoose
+  .connect(process.env.MONGODB_URI)
+  .then(() => console.log("MongoDB Atlas connected successfully"))
+  .catch((error) => console.log("MongoDB connection error:", error));
 
 const app = express();
 const PORT = process.env.PORT || 5000; 
@@ -13,7 +20,7 @@ const PORT = process.env.PORT || 5000;
 
 app.use(
     cors({
-        origin: 'http://localhost:5000',
+        origin: 'http://localhost:5173',
         methods: ['GET', 'POST', 'PUT', 'DELETE'],
         allowedHeaders : [
             'Content-Type',
@@ -29,4 +36,7 @@ app.use(
 
 app.use(cookieParser());
 app.use(express.json());
+app.use('/api/auth', authRouter);
+
+
 app.listen(PORT, () => (console.log(`Server is running on port ${PORT}`)));
